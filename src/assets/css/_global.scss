@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem;
+}
+
+address {
+  font-style: normal;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0;
+
+  @media only screen and (max-width: 480px) {
+    font-size: 1.25em;
+  }
+
+  @media only screen and (max-width: 360px) {
+    font-size: 1em;
+  }
+}
+
+h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 10px;
+
+  @media only screen and (max-width: 480px) {
+    font-size: 0.875em;
+  }
+}
+
+h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  letter-spacing: 0.04em;
+}
+
+div {
+  word-break: break-word;
+}

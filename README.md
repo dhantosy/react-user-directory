@@ -41,4 +41,4 @@ Known Bugs:
 - Filter can only be chosen either one, cannot be both. eg. when Color & Cities filter are both active, the displayed data shows filtered by City.
 
 To Do:
-- create infinite scrolling
+- Create infinite scrolling (Need more time to do some research).

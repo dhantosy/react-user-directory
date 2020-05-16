@@ -1,0 +1,72 @@
+@import '../../assets/css/variables';
+
+header {
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  box-shadow: 0 1px 10px rgba(0,0,0,0.2);
+  padding: 10px 20px;
+
+  @media only screen and (max-width: 640px) {
+    align-items: center;
+    background: $white;
+    top: 0;
+    width: 100%;
+    left: 0;
+    z-index: 2;
+    margin: 0;
+    
+    position: fixed;
+  }
+
+  h5 {
+    @media only screen and (max-width: 480px) {
+      display: none;
+    }
+  }
+}
+
+.navigation {
+  
+  &__container {
+    display: flex;
+    justify-content: space-between;
+    width: 180px;
+
+    @media only screen and (max-width: 480px) {
+      justify-content: space-evenly;
+    }
+  }
+
+  &__item {
+    border-radius: 5px;
+    border: 1px solid $black;
+    padding: 6px 20px;
+    background-color: $white;
+    color: $black;
+    transition: all 0.2s ease-in-out;
+
+    @media only screen and (max-width: 480px) {
+      font-size: 0.875em;
+      padding: 4px 15px;
+    }
+
+    @media only screen and (max-width: 360px) {
+      font-size: 0.75em;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background-color: $grayLight;
+    }
+
+    &_active {
+      background-color: $black;
+      color: $white;
+
+      &:hover {
+        background-color: $grayDark;  
+      }
+    }
+  }
+}

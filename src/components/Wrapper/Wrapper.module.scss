@@ -1,0 +1,10 @@
+.wrapper {
+  padding: 0;
+  height: 100vh;
+  overflow-y: hidden;
+
+  @media only screen and (max-width: 640px) {
+    overflow-y: initial;
+    padding: 100px 20px 0;
+  }
+}

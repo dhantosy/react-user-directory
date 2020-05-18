@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import StylesUserCard from './UserCard.module.scss';
+import LoadingSkeleton from './../LoadingSkeleton/LoadingSkeleton';
 import axios from 'axios';
 
 class UserCard extends Component {
@@ -12,6 +13,7 @@ class UserCard extends Component {
       sortedDataByColor: [],
       sortedDataByCity: [],
       isDataFetched: false,
+      isLoading: true,
       errorMessage: undefined
     }
   }
@@ -24,12 +26,14 @@ class UserCard extends Component {
         this.setState({
           originalData: response.data.results,
           isDataFetched: true,
+          isLoading: false
         })
       })
       .catch(error => {
         this.setState({
           errorMessage: error,
           isDataFetched: false,
+          isLoading: false
         })
       });
   }
@@ -68,7 +72,7 @@ class UserCard extends Component {
 
   }
 
-  render() {
+  renderContent() {
     let isColorSelected = this.props.isColorSelected;
     let isCitiesSelected = this.props.isCitiesSelected;
     let dataSource;
@@ -81,7 +85,7 @@ class UserCard extends Component {
       }
     } else if (isColorSelected === true) {
       dataSource = this.state.sortedDataByColor;
-      
+
       if (isCitiesSelected === true) {
         dataSource = this.state.sortedDataByCity;
       }
@@ -89,47 +93,83 @@ class UserCard extends Component {
       dataSource = this.state.originalData;
     }
 
-    return (
-      <section className={`${StylesUserCard.container}`}>
-        {
-          this.state.originalData.length
-            ? dataSource.slice(0, 10).map((user, key) => {
-              let bgColor;
+    if (this.state.isLoading) {
+      return (
+        [...new Array(3)].map((data, index) => {
+          return (
+            <div className={`${StylesUserCard.card__container}`} key={index}>
+              <div className={`${StylesUserCard.card__item}`}>
+                <figure>
+                  <LoadingSkeleton />
+                </figure>
+                <div className={`${StylesUserCard.card__desc}`}>
+                  <h6>
+                    <div><LoadingSkeleton /></div>
+                    <div><LoadingSkeleton /></div>
+                  </h6>
+                  <address>
+                    <div><LoadingSkeleton /></div>
+                  </address>
+                  <div className={`${StylesUserCard.card__email}`}>
+                    <LoadingSkeleton />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })
+      )
+    } else {
+      return (
+        <>
+          {
+            this.state.originalData.length
+              ? dataSource.slice(0, 10).map((user, key) => {
+                let bgColor;
 
-              if (user.dob.age < 21) {
-                bgColor = `${StylesUserCard.bg__red}`;
-              } else if (user.dob.age > 20 && user.dob.age < 57) {
-                bgColor = `${StylesUserCard.bg__green}`;
-              } else {
-                bgColor = `${StylesUserCard.bg__blue}`;
-              }
+                if (user.dob.age < 21) {
+                  bgColor = `${StylesUserCard.bg__red}`;
+                } else if (user.dob.age > 20 && user.dob.age < 57) {
+                  bgColor = `${StylesUserCard.bg__green}`;
+                } else {
+                  bgColor = `${StylesUserCard.bg__blue}`;
+                }
 
-              return (
-                <div className={`${StylesUserCard.card__container}`} key={key}>
-                  <div className={`${StylesUserCard.card__item} ${bgColor}`}>
-                    <figure>
-                      <img src={user.picture.large} alt={`${user.name.first} ${user.name.last}`} />
-                    </figure>
-                    <div className={`${StylesUserCard.card__desc}`}>
-                      <h6>
-                        <div>{`${user.name.title}. ${user.name.first} ${user.name.last}`}</div>
-                        <div>{user.dob.age}</div>
-                      </h6>
-                      <address>
-                        <div>
-                          {`${user.location.city}, ${user.location.state}, ${user.location.postcode}`}
+                return (
+                  <div className={`${StylesUserCard.card__container}`} key={key}>
+                    <div className={`${StylesUserCard.card__item} ${bgColor}`}>
+                      <figure>
+                        <img src={user.picture.large} alt={`${user.name.first} ${user.name.last}`} />
+                      </figure>
+                      <div className={`${StylesUserCard.card__desc}`}>
+                        <h6>
+                          <div>{`${user.name.title}. ${user.name.first} ${user.name.last}`}</div>
+                          <div>{user.dob.age}</div>
+                        </h6>
+                        <address>
+                          <div>
+                            {`${user.location.city}, ${user.location.state}, ${user.location.postcode}`}
+                          </div>
+                        </address>
+                        <div className={`${StylesUserCard.card__email}`}>
+                          {user.email}
                         </div>
-                      </address>
-                      <div className={`${StylesUserCard.card__email}`}>
-                        {user.email}
                       </div>
                     </div>
                   </div>
-                </div>
-              )
-            })
-            : null
-        }
+                )
+              })
+              : null
+          }
+        </>
+      )
+    }
+  }
+
+  render() {
+    return (
+      <section className={`${StylesUserCard.container}`}>
+        {this.renderContent()}
       </section>
     )
   }

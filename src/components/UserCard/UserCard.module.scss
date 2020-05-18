@@ -4,14 +4,18 @@
   overflow-x: scroll;
   display: flex;
   height: 100%;
-  padding-top: 10px;
-  background-color: $grayLight;
+  padding: 40px;
+  background-color: $purpleLight;
 
   @media only screen and (max-width: 640px) {
     overflow-x: initial;
     display: block;
     height: auto;
     padding: 100px 20px 50px;
+  }
+
+  @media only screen and (max-width: 480px) {
+    padding: 80px 20px 50px;
   }
 }
 
@@ -32,7 +36,7 @@
     margin: 20px;
     padding: 15px 20px;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 15px;
     border: 1px solid $grayLight;
     box-sizing: border-box;
     box-shadow: 0 0 5px rgba(0,0,0,.1);
@@ -57,9 +61,10 @@
     }
 
     figure {
-      width: 100px;
-      height: 100px;
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
+      border: 5px solid #fff;
       overflow: hidden;
       margin: 20px auto 30px;
       position: relative;
@@ -74,8 +79,8 @@
     }
 
     img {
-      width: 100px;
-      height: 100px;
+      width: 150px;
+      height: 150px;
       top: 0;
       bottom: 0;
       right: 0;
@@ -103,7 +108,7 @@
     font-size: 0.875em;
     margin-top: 10px;
     margin-bottom: 20px;
-    opacity: 0.6;
+    opacity: 0.4;
 
     @media only screen and (max-width: 640px) {
       margin-top: -10px;

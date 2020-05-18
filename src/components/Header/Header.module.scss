@@ -3,11 +3,14 @@
 header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid rgba(0, 0, 0, .1);
   box-sizing: border-box;
   box-shadow: 0 1px 10px rgba(0,0,0,0.2);
-  padding: 10px 20px;
+  padding: 20px 60px;
 
   @media only screen and (max-width: 640px) {
+    padding: 20px;
     align-items: center;
     background: $white;
     top: 0;
@@ -15,12 +18,11 @@ header {
     left: 0;
     z-index: 2;
     margin: 0;
-    
     position: fixed;
   }
 
   h5 {
-    @media only screen and (max-width: 480px) {
+    @media only screen and (max-width: 540px) {
       display: none;
     }
   }
@@ -31,10 +33,15 @@ header {
   &__container {
     display: flex;
     justify-content: space-between;
-    width: 180px;
+    align-items: baseline;
+    width: 260px;
+
+    @media only screen and (max-width: 540px) {
+      width: 170px;
+    }
 
     @media only screen and (max-width: 480px) {
-      justify-content: space-evenly;
+      width: 130px;
     }
   }
 

@@ -62,6 +62,7 @@ class HeaderActions extends Component {
 
     return (
       <div className={`${StylesHeader.navigation__container}`}>
+        <h5>Filter By:</h5>
         <div
           className={btnColorClassName}
           onClick={this.handleBtnColorClick}
@@ -72,7 +73,7 @@ class HeaderActions extends Component {
           className={btnCitiesClassName}
           onClick={this.handleBtnCitiesClick}
         >
-          <span>Cities</span>
+          <span>City</span>
         </div>
       </div>
     )

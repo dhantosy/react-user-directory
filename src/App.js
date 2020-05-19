@@ -9,8 +9,8 @@ class App extends Component {
     super(props);
     
     this.state = {
-      isColorSelected: undefined,
-      isCitiesSelected: undefined
+      isColorSelected: null,
+      isCitiesSelected: null
     }
   }
 

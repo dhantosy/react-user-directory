@@ -35,11 +35,13 @@ In the terminal, go to the project folder and do the following:
 npm run build
 ```
 
-------------------------------
 
-Known Bugs:
-- During initial page load, filter returns empty array when selected. Current workaround is to select the filter, then refresh the page.
-- Filter can only be chosen either one, cannot be both. eg. when Color & Cities filter are both active, the displayed data shows filtered by City.
 
-To Do:
-- Create infinite scrolling (Need more time to do some research).
+### To run test cases
+
+In the terminal, go to the project folder and do the following:
+
+```shell
+npm run test
+```
+

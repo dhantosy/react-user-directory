@@ -35,10 +35,11 @@ In the terminal, go to the project folder and do the following:
 npm run build
 ```
 
-------------------------------
 
-Known Bugs:
-- Filter can only be chosen either one, cannot be both. eg. when Color & Cities filter are both active, the displayed data shows filtered by City.
+### To run test cases
 
-To Do:
-- create infinite scrolling
+In the terminal, go to the project folder and do the following:
+
+```shell
+npm run test
+```

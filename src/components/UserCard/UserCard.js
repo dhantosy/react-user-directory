@@ -69,10 +69,10 @@ class UserCard extends Component {
     const node = this.cardContainerRef;
     let windowWidth = this.state.windowWidth;
     let scrollLeft = node.current.scrollLeft;
-    let scrollTop = node.current.scrollTop;
     let scrollWidth = node.current.scrollWidth;
-    let scrollHeight = node.current.scrollHeight;
-    let clientHeight = node.current.clientHeight;
+    let scrollTop = + parseFloat(node.current.scrollTop).toFixed();
+    let scrollHeight = + parseFloat(node.current.scrollHeight).toFixed();
+    let clientHeight = + parseFloat(node.current.clientHeight).toFixed();
 
     if (windowWidth > 640) {
       if ((scrollWidth - scrollLeft) === windowWidth) {

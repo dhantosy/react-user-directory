@@ -5,7 +5,7 @@
   top: 100px;
   left: 50%;
   margin-left: -82px;
-  background-color: #FFF7D2;
+  background-color: $yellow;
   padding: 10px 20px;
   border-radius: 5px;
   border: 1px solid $grayLight;
@@ -50,6 +50,7 @@
   }
 
   &__item {
+    background-color: $white;
     width: 350px;
     margin: 20px;
     padding: 15px 20px;

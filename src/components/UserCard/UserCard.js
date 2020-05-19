@@ -30,29 +30,58 @@ class UserCard extends Component {
   }
 
   componentDidMount = () => {
+    let isAppLoaded = localStorage.getItem('isLoaded');
     const apiURL = 'https://randomuser.me/api/?results=100';
     window.addEventListener('resize', this.updateDimensions.bind(this));
 
-    axios.get(apiURL)
-      .then(response => {
-        this.setState({
-          originalData: response.data.results,
-          chunkedData: splitArray(response.data.results, 10),
-          isLoading: false,
-        }, function() {
-            this.setState({
-              sortedDataByColor: filterDataByColor(this.state.chunkedData[0]),
-              sortedDataByCity: filterDataByCity(this.state.chunkedData[0]),
-              newChunkedData: this.state.chunkedData[0]
-            });
+    if (isAppLoaded) {
+      
+      this.setState({
+        isLoading: false,
+        scrolledCount: localStorage.getItem('scrolledCount'),
+        originalData: JSON.parse(localStorage.getItem('originalData')),
+        chunkedData: JSON.parse(localStorage.getItem('chunkedData'),)
+      }, function () {
+          this.setState({
+            sortedDataByColor: JSON.parse(localStorage.getItem('sortedDataByColor')),
+            sortedDataByCity: JSON.parse(localStorage.getItem('sortedDataByCity')),
+            newChunkedData: JSON.parse(localStorage.getItem('newChunkedData'))
+          });
+        }
+      )
+    } else {
+      axios.get(apiURL)
+        .then(response => {
+
+          localStorage.setItem('isLoaded', true);
+          localStorage.setItem('originalData', JSON.stringify(response.data.results));
+          localStorage.setItem('chunkedData', JSON.stringify(splitArray(response.data.results, 10)));
+
+          this.setState({
+            originalData: response.data.results,
+            chunkedData: splitArray(response.data.results, 10),
+            isLoading: false,
+          }, function () {
+
+              localStorage.setItem('sortedDataByColor', JSON.stringify(filterDataByColor(this.state.chunkedData[0])));
+              localStorage.setItem('sortedDataByCity', JSON.stringify(filterDataByColor(this.state.chunkedData[0])));
+              localStorage.setItem('newChunkedData', JSON.stringify(this.state.chunkedData[0]));
+
+              this.setState({
+                sortedDataByColor: filterDataByColor(this.state.chunkedData[0]),
+                sortedDataByCity: filterDataByCity(this.state.chunkedData[0]),
+                newChunkedData: this.state.chunkedData[0]
+              });
+            }
+          )
         })
-      })
-      .catch(error => {
-        this.setState({
-          errorMessage: error,
-          isLoading: false
-        })
-      });
+        .catch(error => {
+          this.setState({
+            errorMessage: error,
+            isLoading: false
+          })
+        });
+    }
   }
 
   componentWillUnmount() {
@@ -60,6 +89,7 @@ class UserCard extends Component {
   }
 
   updateDimensions() {
+
     this.setState({ 
       windowWidth: window.innerWidth
     });
@@ -69,56 +99,82 @@ class UserCard extends Component {
     const node = this.cardContainerRef;
     let windowWidth = this.state.windowWidth;
     let scrollLeft = node.current.scrollLeft;
-    let scrollTop = node.current.scrollTop;
     let scrollWidth = node.current.scrollWidth;
-    let scrollHeight = node.current.scrollHeight;
-    let clientHeight = node.current.clientHeight;
+    let scrollTop = + parseFloat(node.current.scrollTop).toFixed();
+    let scrollHeight = + parseFloat(node.current.scrollHeight).toFixed();
+    let clientHeight = + parseFloat(node.current.clientHeight).toFixed();
 
     if (windowWidth > 640) {
       if ((scrollWidth - scrollLeft) === windowWidth) {
+
         this.setState({
           getMoreUsers: true
         }, function () {
-          if (this.state.scrolledCount < this.state.scrolledCountMax) {
-            setTimeout(function () {
-              this.setState({
-                scrolledCount: props + 1,
-                getMoreUsers: false
-              }, function () {
-                let updatedData = [...this.state.newChunkedData].concat(this.state.chunkedData[this.state.scrolledCount]);
+            let scrolledCountFromLocalStorage = localStorage.getItem('scrolledCount');
+
+            if (scrolledCountFromLocalStorage ? scrolledCountFromLocalStorage < this.state.scrolledCountMax : this.state.scrolledCount < this.state.scrolledCountMax) {
+              setTimeout(function () {
+
+                localStorage.setItem('scrolledCount', parseInt(props) + 1);
 
                 this.setState({
-                  newChunkedData: updatedData,
-                  sortedDataByColor: filterDataByColor(updatedData),
-                  sortedDataByCity: filterDataByCity(updatedData)
+                  scrolledCount: parseInt(props) + 1,
+                  getMoreUsers: false
+                }, function () {
+
+                    let updatedData = [...this.state.newChunkedData].concat(this.state.chunkedData[this.state.scrolledCount]);
+
+                    localStorage.setItem('newChunkedData', JSON.stringify(updatedData));
+                    localStorage.setItem('sortedDataByColor', JSON.stringify(filterDataByColor(updatedData)));
+                    localStorage.setItem('sortedDataByCity', JSON.stringify(filterDataByCity(updatedData)));
+
+                    this.setState({
+                      newChunkedData: updatedData,
+                      sortedDataByColor: filterDataByColor(updatedData),
+                      sortedDataByCity: filterDataByCity(updatedData)
+                    }
+
+                  )
                 })
-              })
-            }.bind(this), 500)
+              }.bind(this), 500)
+            }
           }
-        })
+        )
       }
     } else {
       if ((scrollHeight - scrollTop) === clientHeight) {
         this.setState({
           getMoreUsers: true
         }, function () {
-          if (this.state.scrolledCount < this.state.scrolledCountMax) {
-            setTimeout(function () {
-              this.setState({
-                scrolledCount: props + 1,
-                getMoreUsers: false
-              }, function () {
-                let updatedData = [...this.state.newChunkedData].concat(this.state.chunkedData[this.state.scrolledCount]);
+            let scrolledCountFromLocalStorage = localStorage.getItem('scrolledCount');
+
+            if (scrolledCountFromLocalStorage ? scrolledCountFromLocalStorage < this.state.scrolledCountMax : this.state.scrolledCount < this.state.scrolledCountMax) {
+              setTimeout(function () {
+
+                localStorage.setItem('scrolledCount', parseInt(props) + 1);
 
                 this.setState({
-                  newChunkedData: updatedData,
-                  sortedDataByColor: filterDataByColor(updatedData),
-                  sortedDataByCity: filterDataByCity(updatedData)
+                  scrolledCount: parseInt(props) + 1,
+                  getMoreUsers: false
+                }, function () {
+
+                    let updatedData = [...this.state.newChunkedData].concat(this.state.chunkedData[this.state.scrolledCount]);
+
+                    localStorage.setItem('newChunkedData', JSON.stringify(updatedData));
+                    localStorage.setItem('sortedDataByColor', JSON.stringify(filterDataByColor(updatedData)));
+                    localStorage.setItem('sortedDataByCity', JSON.stringify(filterDataByCity(updatedData)));
+
+                    this.setState({
+                      newChunkedData: updatedData,
+                      sortedDataByColor: filterDataByColor(updatedData),
+                      sortedDataByCity: filterDataByCity(updatedData)
+                    }
+                  )
                 })
-              })
-            }.bind(this), 500)
+              }.bind(this), 500)
+            }
           }
-        })
+        )
       }
     }
   }
@@ -126,7 +182,7 @@ class UserCard extends Component {
   renderContent() {
     let isColorSelected = this.props.isColorSelected;
     let isCitiesSelected = this.props.isCitiesSelected;
-    let dataSource;
+    let dataSource = [];
 
     if (isColorSelected === false) {
       dataSource = this.state.newChunkedData;

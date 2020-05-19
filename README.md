@@ -36,6 +36,7 @@ npm run build
 ```
 
 
+
 ### To run test cases
 
 In the terminal, go to the project folder and do the following:
@@ -43,3 +44,4 @@ In the terminal, go to the project folder and do the following:
 ```shell
 npm run test
 ```
+

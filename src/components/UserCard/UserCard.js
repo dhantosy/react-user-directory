@@ -1,75 +1,126 @@
 import React, { Component } from 'react';
-import StylesUserCard from './UserCard.module.scss';
-import LoadingSkeleton from './../LoadingSkeleton/LoadingSkeleton';
 import axios from 'axios';
+import { splitArray } from '../../utils/splitArray';
+import { filterDataByColor } from '../../utils/filterDataByColor';
+import { filterDataByCity } from '../../utils/filterDataByCity';
+
+import UserCardItem from './UserCardItem';
+import StylesUserCard from './UserCard.module.scss';
 
 class UserCard extends Component {
 
   constructor(props) {
     super(props);
+    this.cardContainerRef = React.createRef();
 
     this.state = {
       originalData: [],
+      chunkedData: [],
+      newChunkedData: [],
       sortedDataByColor: [],
       sortedDataByCity: [],
-      isDataFetched: false,
       isLoading: true,
-      errorMessage: undefined
+      errorMessage: null,
+      scrolledCount: 0,
+      scrolledCountMax: 9,
+      windowWidth: window.innerWidth, 
+      windowHeight: window.innerHeight,
+      getMoreUsers: false
     }
   }
 
   componentDidMount = () => {
     const apiURL = 'https://randomuser.me/api/?results=100';
+    window.addEventListener('resize', this.updateDimensions.bind(this));
 
     axios.get(apiURL)
       .then(response => {
         this.setState({
           originalData: response.data.results,
-          isDataFetched: true,
-          isLoading: false
+          chunkedData: splitArray(response.data.results, 10),
+          isLoading: false,
+        }, function() {
+            this.setState({
+              sortedDataByColor: filterDataByColor(this.state.chunkedData[0]),
+              sortedDataByCity: filterDataByCity(this.state.chunkedData[0]),
+              newChunkedData: this.state.chunkedData[0]
+            });
         })
       })
       .catch(error => {
         this.setState({
           errorMessage: error,
-          isDataFetched: false,
           isLoading: false
         })
       });
   }
 
-  componentDidUpdate = (prevProps, prevState) => {
-    let originalData = this.state.originalData;
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions.bind(this));
+  }
 
-    if (prevProps.isColorSelected !== undefined && !prevState.isDataFetched) {
-      let sortData = [];
+  updateDimensions() {
+    this.setState({ 
+      windowWidth: window.innerWidth
+    });
+  }
 
-      let getAgeGreen = originalData.filter(function (el) {
-        return el.dob.age > 20 && el.dob.age < 57
-      });
+  handleScroll = (props) => {
+    const node = this.cardContainerRef;
+    let windowWidth = this.state.windowWidth;
+    let scrollLeft = node.current.scrollLeft;
+    let scrollTop = node.current.scrollTop;
+    let scrollWidth = node.current.scrollWidth;
+    let scrollHeight = node.current.scrollHeight;
+    let clientHeight = node.current.clientHeight;
 
-      let getAgeBlue = originalData.filter(function (el) {
-        return el.dob.age > 56
-      });
+    if (windowWidth > 640) {
+      if ((scrollWidth - scrollLeft) === windowWidth) {
+        this.setState({
+          getMoreUsers: true
+        }, function () {
+          if (this.state.scrolledCount < this.state.scrolledCountMax) {
+            setTimeout(function () {
+              this.setState({
+                scrolledCount: props + 1,
+                getMoreUsers: false
+              }, function () {
+                let updatedData = [...this.state.newChunkedData].concat(this.state.chunkedData[this.state.scrolledCount]);
 
-      let getAgeRed = originalData.filter(function (el) {
-        return el.dob.age < 21
-      });
+                this.setState({
+                  newChunkedData: updatedData,
+                  sortedDataByColor: filterDataByColor(updatedData),
+                  sortedDataByCity: filterDataByCity(updatedData)
+                })
+              })
+            }.bind(this), 500)
+          }
+        })
+      }
+    } else {
+      if ((scrollHeight - scrollTop) === clientHeight) {
+        this.setState({
+          getMoreUsers: true
+        }, function () {
+          if (this.state.scrolledCount < this.state.scrolledCountMax) {
+            setTimeout(function () {
+              this.setState({
+                scrolledCount: props + 1,
+                getMoreUsers: false
+              }, function () {
+                let updatedData = [...this.state.newChunkedData].concat(this.state.chunkedData[this.state.scrolledCount]);
 
-      this.setState({
-        sortedDataByColor: sortData.concat(getAgeGreen, getAgeBlue, getAgeRed)
-      })
+                this.setState({
+                  newChunkedData: updatedData,
+                  sortedDataByColor: filterDataByColor(updatedData),
+                  sortedDataByCity: filterDataByCity(updatedData)
+                })
+              })
+            }.bind(this), 500)
+          }
+        })
+      }
     }
-
-    if (prevProps.isCitiesSelected !== undefined && !prevState.isDataFetched) {
-
-      let sortData = [...originalData].sort((a, b) => (a.location.city > b.location.city) ? 1 : (a.location.city === b.location.city) ? ((a.location.state > b.location.state) ? 1 : -1) : -1);
-
-      this.setState({
-        sortedDataByCity: sortData
-      });
-    }
-
   }
 
   renderContent() {
@@ -78,7 +129,7 @@ class UserCard extends Component {
     let dataSource;
 
     if (isColorSelected === false) {
-      dataSource = this.state.originalData;
+      dataSource = this.state.newChunkedData;
 
       if (isCitiesSelected) {
         dataSource = this.state.sortedDataByCity;
@@ -90,86 +141,55 @@ class UserCard extends Component {
         dataSource = this.state.sortedDataByCity;
       }
     } else {
-      dataSource = this.state.originalData;
+      dataSource = this.state.newChunkedData;
     }
 
-    if (this.state.isLoading) {
-      return (
-        [...new Array(3)].map((data, index) => {
-          return (
-            <div className={`${StylesUserCard.card__container}`} key={index}>
-              <div className={`${StylesUserCard.card__item}`}>
-                <figure>
-                  <LoadingSkeleton />
-                </figure>
-                <div className={`${StylesUserCard.card__desc}`}>
-                  <h6>
-                    <div><LoadingSkeleton /></div>
-                    <div><LoadingSkeleton /></div>
-                  </h6>
-                  <address>
-                    <div><LoadingSkeleton /></div>
-                  </address>
-                  <div className={`${StylesUserCard.card__email}`}>
-                    <LoadingSkeleton />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )
-        })
-      )
-    } else {
-      return (
-        <>
-          {
-            this.state.originalData.length
-              ? dataSource.slice(0, 10).map((user, key) => {
-                let bgColor;
-
-                if (user.dob.age < 21) {
-                  bgColor = `${StylesUserCard.bg__red}`;
-                } else if (user.dob.age > 20 && user.dob.age < 57) {
-                  bgColor = `${StylesUserCard.bg__green}`;
-                } else {
-                  bgColor = `${StylesUserCard.bg__blue}`;
-                }
-
+    return (
+      <>
+        {
+          this.state.isLoading
+            ? [...new Array(5)].map((user, key) => {
                 return (
-                  <div className={`${StylesUserCard.card__container}`} key={key}>
-                    <div className={`${StylesUserCard.card__item} ${bgColor}`}>
-                      <figure>
-                        <img src={user.picture.large} alt={`${user.name.first} ${user.name.last}`} />
-                      </figure>
-                      <div className={`${StylesUserCard.card__desc}`}>
-                        <h6>
-                          <div>{`${user.name.title}. ${user.name.first} ${user.name.last}`}</div>
-                          <div>{user.dob.age}</div>
-                        </h6>
-                        <address>
-                          <div>
-                            {`${user.location.city}, ${user.location.state}, ${user.location.postcode}`}
-                          </div>
-                        </address>
-                        <div className={`${StylesUserCard.card__email}`}>
-                          {user.email}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <UserCardItem
+                    key={key}
+                  />
                 )
               })
-              : null
-          }
-        </>
-      )
-    }
+            : dataSource.map((user, key) => {
+              return (
+                <UserCardItem
+                  key={key}
+                  userData={user}
+                />
+              )
+            })
+        }
+      </>
+    )
   }
 
   render() {
+    let mobileHeight;
+
+    if (this.state.windowWidth < 641) {
+      mobileHeight = this.state.windowHeight - 120;
+    }
+
     return (
-      <section className={`${StylesUserCard.container}`}>
+      <section 
+        ref={this.cardContainerRef} 
+        className={`${StylesUserCard.container}`} 
+        onScroll={() => this.handleScroll(this.state.scrolledCount)}
+        style={{
+          height: mobileHeight
+        }}
+      >
         {this.renderContent()}
+        {
+          this.state.getMoreUsers && this.state.scrolledCount < 9
+            ? <div className={`${StylesUserCard.notice}`} >Loading more data..</div>
+            : null
+        }
       </section>
     )
   }

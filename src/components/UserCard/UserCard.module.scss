@@ -1,14 +1,28 @@
 @import '../../assets/css/variables';
 
+.notice {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  margin-left: -82px;
+  background-color: $yellow;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: 1px solid $grayLight;
+  box-shadow: 0 0 5px rgba(0,0,0,.1);
+  font-size: 0.875em;
+}
+
 .container {
   overflow-x: scroll;
   display: flex;
   height: 100%;
-  padding: 40px;
+  padding: 60px 40px 40px;
   background-color: $purpleLight;
 
   @media only screen and (max-width: 640px) {
     overflow-x: initial;
+    overflow-y: scroll;
     display: block;
     height: auto;
     padding: 100px 20px 50px;
@@ -23,15 +37,20 @@
   
   &__container {
     height: 100%;
+
+    @media only screen and (max-width: 640px) {
+      height: auto;
+    }
   }
 
   &__desc {
     @media only screen and (max-width: 640px) {
-      padding-left: 90px; 
+      padding-left: 100px; 
     }
   }
 
   &__item {
+    background-color: $white;
     width: 350px;
     margin: 20px;
     padding: 15px 20px;

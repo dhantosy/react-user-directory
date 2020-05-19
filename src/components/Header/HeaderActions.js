@@ -64,12 +64,14 @@ class HeaderActions extends Component {
       <div className={`${StylesHeader.navigation__container}`}>
         <h5>Filter By:</h5>
         <div
+          id='btnFilterColor'
           className={btnColorClassName}
           onClick={this.handleBtnColorClick}
         >
           <span>Color</span>
         </div>
         <div
+          id='btnFilterCity'
           className={btnCitiesClassName}
           onClick={this.handleBtnCitiesClick}
         >

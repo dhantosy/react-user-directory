@@ -54,6 +54,7 @@ class UserCard extends Component {
         .then(response => {
 
           localStorage.setItem('isLoaded', true);
+          localStorage.setItem('scrolledCount', this.state.scrolledCount);
           localStorage.setItem('originalData', JSON.stringify(response.data.results));
           localStorage.setItem('chunkedData', JSON.stringify(splitArray(response.data.results, 10)));
 
